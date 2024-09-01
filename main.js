@@ -18,17 +18,60 @@ const appendCommentBox = (element) => {
   commentBox.querySelector("textarea").focus();
 };
 
-commentsContainer.addEventListener(
-  "click",
-  (e) => {
-    if (e.target.getAttribute("class")?.includes("mutate-btn--reply")) {
-      // appendCommentBox(e.target.parentElement.parentElement.parentElement);
-      // console.log('appending comment box...');
-      // console.log(e.target);
-    }
-  },
-  true
-);
+const confirmModal = () => {
+  // const modal = document.createElement("div");
+  // modal.setAttribute("class", "prompt-modal");
+  // modal.insertAdjacentHTML('beforeend', `<span>Delete comment?</span>
+  //   <p>Are you sure you want to delete this comment? This will remove the comment and can't be undone.</p>
+  //   <div class="btns">
+  //     <button class="cancel" type="submit">No, Cancel</button>
+  //     <button class="delete" type="submit">Yes, Delete</button>
+  //   </div>`)
+
+  // document.querySelector('body').appendChild(modal);
+
+  
+
+  // console.log(modal.querySelector('button'));
+  // modal.style.display = "block";
+  // modal.querySelector(".cancel").addEventListener('click', () => {
+  //   modal.style.display = "";
+  // })
+
+  // modal.querySelector(".delete").addEventListener("click", () => {
+  //   modal.style.display = "";
+  //   return true;
+  // })
+  
+}
+// const testt = confirmModal()
+// console.log(testt);
+
+function showConfirmModal() {
+  return new Promise((resolve) => {
+    // Get modal elements
+    const modal = document.querySelector('.prompt-modal');
+    const cancelBtn = modal.querySelector(".cancel");
+    const deleteBtn = modal.querySelector(".delete");
+
+    // Show the modal
+    modal.style.display = 'flex';
+
+    // Handle cancel button click
+    cancelBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      resolve(false); // Resolves to false when "Cancel" is clicked
+    }, { once: true });
+
+    // Handle delete button click
+    deleteBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      resolve(true); // Resolves to true when "Delete" is clicked
+    }, { once: true });
+  });
+}
+
+
 
 const updateLocalStorage = (key, value) => {
   localStorage.setItem(key, value);
@@ -262,36 +305,42 @@ fetchComments().then((data) => {
     for (const button of commentsContainer.querySelectorAll(
       ".mutate-btn--delete"
     )) {
-      button.addEventListener("click", (e) => {
-        console.log(e.target.parentElement.parentElement.parentElement.parentElement.id);
-        
-        (function loop(arr = localComments.comments) {
-          // localComments = arr.filter((comment) => {
-            
-          // })
+      button.addEventListener("click", async (e) => {
 
-          for (const comment of arr) {
-            if (comment.id == e.target.parentElement.parentElement.parentElement.parentElement.id) {
-              // console.log(comment);
-              // console.log(arr);
-              console.log(localComments.comments);
-              tempArr = arr.filter((item) => item.id != comment.id)
-              arr.length = 0;
-              arr.push(...tempArr);
-              // console.log(arr);
-              console.log(localComments.comments);
-              commentsContainer.innerHTML = traverse(localComments.comments);
-              localStorage.setItem("localComments", JSON.stringify(localComments));
+        const userConfirmed = await showConfirmModal();
+
+        if (userConfirmed) {
+          console.log(e.target.parentElement.parentElement.parentElement.parentElement.id);
+          
+          (function loop(arr = localComments.comments) {
+            // localComments = arr.filter((comment) => {
               
-              // return;
-            } else {
-              loop(comment.replies)
+            // })
+  
+            for (const comment of arr) {
+              if (comment.id == e.target.parentElement.parentElement.parentElement.parentElement.id) {
+                // console.log(comment);
+                // console.log(arr);
+                console.log(localComments.comments);
+                tempArr = arr.filter((item) => item.id != comment.id)
+                arr.length = 0;
+                arr.push(...tempArr);
+                // console.log(arr);
+                console.log(localComments.comments);
+                commentsContainer.innerHTML = traverse(localComments.comments);
+                localStorage.setItem("localComments", JSON.stringify(localComments));
+                
+                // return;
+              } else {
+                loop(comment.replies)
+              }
             }
-          }
-
-        })();
-
-        addReplyBtnsEvent();
+  
+          })();
+  
+          addReplyBtnsEvent();
+          
+        }
       });
     }
 

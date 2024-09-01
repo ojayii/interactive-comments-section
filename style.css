@@ -41,8 +41,16 @@ button {
     padding: 0.7rem;
 }
 
+button:hover {
+    filter: opacity(0.6);
+}
+
 p {
     line-height: 1.5;
+}
+
+textarea:hover {
+    outline: 1px solid var(--light-grayish-blue);
 }
 
 .comments-container {
@@ -86,6 +94,10 @@ p {
 
 .score-wrapper>button {
     display: flex;
+}
+
+.score-wrapper>button:hover>img {
+    filter: saturate(30);
 }
 
 .mutate-btns {
@@ -157,6 +169,7 @@ input.mutate-btn:checked ~ button {
 }
 
 .replies {
+    /* border-left: 1px solid rgba(105, 105, 105, 0.322); */
     border-left: 1.9px solid var(--light-grayish-blue);
     width: 95%;
     margin-left: auto;
@@ -217,27 +230,36 @@ input.mutate-btn:checked ~ button {
 }
 
 .prompt-modal {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.prompt-modal__wrapper {
     width: 95%;
     max-width: 25rem;
     margin-inline: auto;
     padding: 1rem;
     background-color: white;
     border-radius: 10px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 0 10000rem rgba(0, 0, 0, 0.5);
-    display: none;
+    
+    /* box-shadow: 0 0 0 10000rem rgba(0, 0, 0, 0.5); */
+    
 }
 
-.prompt-modal>span {
+.prompt-modal__wrapper>span {
     font-size: clamp(1.2rem, 1.3vw, 1.3rem);
     display: block;
     margin-bottom: clamp(0.5rem, 1.1vw, 1rem);
 }
 
-.prompt-modal>p {
+.prompt-modal__wrapper>p {
     margin-bottom: clamp(0.8rem, 1.1vw, 1rem);
     font-size: 0.9rem;
     font-weight: 400;
@@ -245,13 +267,13 @@ input.mutate-btn:checked ~ button {
 
 }
 
-.prompt-modal>.btns {
+.prompt-modal__wrapper>.btns {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
 }
 
-.prompt-modal button {
+.prompt-modal__wrapper button {
     /* width: 50%; */
     flex-grow: 1;
     padding: 0.7rem;
@@ -261,7 +283,7 @@ input.mutate-btn:checked ~ button {
     background-color: var(--soft-red);
 }
 
-.prompt-modal button:nth-of-type(1) {
+.prompt-modal__wrapper button:nth-of-type(1) {
     background-color: rgb(105, 105, 105);
 }
 
