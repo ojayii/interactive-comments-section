@@ -56,12 +56,35 @@ fetchComments().then((data) => {
   commentsData = data;
   //   console.log(commentsData);
 
-  // const localComments = commentsData;
-  const localComments = JSON.parse(localStorage.getItem("localComments"));
-  if (!localComments)
-    localStorage.setItem("localComments", JSON.stringify(commentsData));
+  let localComments = JSON.parse(localStorage.getItem("localComments")) || commentsData;
+
 
   console.log(localComments);
+
+  const getTimePassed = (timestamp) => {
+    const now = Date.now();
+    const difference = Math.floor((now - timestamp) / 1000); // difference in seconds
+  
+    const timeUnits = [
+      { unit: 'year', value: 31536000 },
+      { unit: 'month', value: 2592000 },
+      { unit: 'week', value: 604800 },
+      { unit: 'day', value: 86400 },
+      { unit: 'hour', value: 3600 },
+      { unit: 'minute', value: 60 },
+      { unit: 'second', value: 1 },
+    ];
+  
+    for (const { unit, value } of timeUnits) {
+      const amount = Math.floor(difference / value);
+      if (amount >= 1) {
+        return `${amount} ${unit}${amount > 1 ? 's' : ''} ago`;
+      }
+    }
+  
+    return 'just now'; // if the difference is less than 1 second
+  };
+  
 
   const traverse = (arr) => {
     const testClick = () => console.log("testing click...");
@@ -82,9 +105,11 @@ fetchComments().then((data) => {
             <img class="user-img" src=${item.user.image.webp} alt>
             ${item.isCurrentUser ? '<span class="user-pov">You</span>' : ""}
             <span class="user-name">${item.user.username}</span>
-            <span class="comment-time">${item.createdAt}</span>
+            <span class="comment-time">${getTimePassed(item.createdAt)}</span>
           </div>
-          <p class="comment-text"><strong class="content-replying-to">${item.replyingTo ?? ''}</strong> ${item.content}</p>
+          <p class="comment-text"><strong class="content-replying-to">${
+            item.replyingTo ?? ""
+          }</strong> <span class= "comment-text--main">${item.content}</span></p>
         </div>
 
         <div class="mutate-btns">
@@ -129,15 +154,15 @@ fetchComments().then((data) => {
     const newComment = {
       id: Date.now(),
       content: comment,
-      createdAt: "1 month ago",
       score: 0,
+      createdAt: Date.now(),
       user: localComments.currentUser,
       replies: [],
       isCurrentUser: true,
-      replyingTo: replyingTo
+      replyingTo: replyingTo,
     };
 
-    (function loop(arr = localComments.comments) {
+    ;(function loop(arr = localComments.comments) {
       if (!id) {
         arr.push(newComment);
         console.log(arr);
@@ -164,24 +189,161 @@ fetchComments().then((data) => {
       ".mutate-btn--reply"
     )) {
       button.addEventListener("click", () => {
+        commentBox.querySelector("button").onclick = () => {
+          console.log("replying...");
+          console.log(commentBox.parentElement.id);
+          // console.log(commentBox.parentElement.querySelector(".user-name"));
+      
+          const replyingTo =
+            "@" + commentBox.parentElement.querySelector(".user-name").textContent;
+          console.log(replyingTo);
+      
+          if (commentBox.querySelector("textarea").value) {
+            attachCommentTo(
+              commentBox.querySelector("textarea").value,
+              commentBox.parentElement.id,
+              replyingTo
+            );
+            commentBox.querySelector("textarea").value = "";
+            addReplyBtnsEvent();
+            commentBox.querySelector("textarea").style.outline = "";
+          } else {
+            commentBox.querySelector("textarea").style.outline = "2px solid red";
+            navigator.vibrate([200, 50, 30]);
+          }
+        }
+
+        commentBox.querySelector("textarea").value = "";
+        commentBox.querySelector("button").textContent = "Send";
+
         appendCommentBox(button.parentElement.parentElement.parentElement);
       });
     }
 
-    console.log(commentsContainer.querySelectorAll(".mutate-btn--delete"));
-    
-    for (const button of commentsContainer.querySelectorAll(".mutate-btn--delete")) {
-      
+    for (const button of commentsContainer.querySelectorAll(
+      ".mutate-btn--edit"
+    )) {
+      button.addEventListener("click", () => {
+        appendCommentBox(button.parentElement.parentElement.parentElement);
+        console.log(button.parentElement.parentElement.parentElement);
+        button.parentElement.parentElement.parentElement.querySelector("textarea")
+          .value = button.parentElement.parentElement.parentElement.querySelector(".comment-text--main").textContent;
+          button.parentElement.parentElement.parentElement.querySelector("textarea").style.outline= "";
+        console.log(button.parentElement.parentElement.parentElement.querySelector(".comment-text"));
+        
+
+        button.parentElement.parentElement.parentElement.querySelector(".add-reply>button").textContent = "Update";
+        button.parentElement.parentElement.parentElement.querySelector(".add-reply>button").
+          onclick = (e) => {
+            console.log(button.parentElement.parentElement.parentElement)
+
+            console.log(e.target.parentElement.parentElement);
+            (function loop(arr = localComments.comments) {
+              arr.forEach((element) => {
+                if (element.id == e.target.parentElement.parentElement.id) {
+                  console.log(element.content);
+                  element.content = e.target.previousElementSibling.value;
+                  console.log(e.target.previousElementSibling.value);
+                  commentsContainer.innerHTML = traverse(localComments.comments);
+                  localStorage.setItem("localComments", JSON.stringify(localComments));
+                  return;
+                } else {
+                  loop(element.replies);
+                }
+              });
+            })();
+            addReplyBtnsEvent();
+          }
+      });
     }
-  };
 
-  function objFunc(x, y) {
-    // return x + y;
+    // console.log(commentsContainer.querySelectorAll(".mutate-btn--delete"));
 
-    // test1() {
-    //   return 'test1'
-    // }
+    for (const button of commentsContainer.querySelectorAll(
+      ".mutate-btn--delete"
+    )) {
+      button.addEventListener("click", (e) => {
+        console.log(e.target.parentElement.parentElement.parentElement.parentElement.id);
+        
+        (function loop(arr = localComments.comments) {
+          // localComments = arr.filter((comment) => {
+            
+          // })
+
+          for (const comment of arr) {
+            if (comment.id == e.target.parentElement.parentElement.parentElement.parentElement.id) {
+              // console.log(comment);
+              // console.log(arr);
+              console.log(localComments.comments);
+              tempArr = arr.filter((item) => item.id != comment.id)
+              arr.length = 0;
+              arr.push(...tempArr);
+              // console.log(arr);
+              console.log(localComments.comments);
+              commentsContainer.innerHTML = traverse(localComments.comments);
+              localStorage.setItem("localComments", JSON.stringify(localComments));
+              
+              // return;
+            } else {
+              loop(comment.replies)
+            }
+          }
+
+        })();
+
+        addReplyBtnsEvent();
+      });
+    }
+
+    const scoreWrappers = document.querySelectorAll(".score-wrapper");
+
+  for (const scoreWrapper of scoreWrappers) {
+    scoreWrapper.children[0].addEventListener("click", () => {
+      scoreWrapper.children[1].textContent =
+        Number(scoreWrapper.children[1].textContent) + 1;
+
+      (function loop(arr = localComments.comments) {
+        arr.forEach((element) => {
+          if (element.id == scoreWrapper.parentElement.parentElement.id) {
+            element.score = Number(scoreWrapper.children[1].textContent);
+            localStorage.setItem(
+              "localComments",
+              JSON.stringify(localComments)
+            );
+            console.log(element);
+            return;
+          } else {
+            loop(element.replies);
+          }
+        });
+      })();
+    });
+
+    scoreWrapper.children[2].addEventListener("click", () => {
+      if (Number(scoreWrapper.children[1].textContent) > 0) {
+        scoreWrapper.children[1].textContent =
+          Number(scoreWrapper.children[1].textContent) - 1;
+  
+        (function loop(arr = localComments.comments) {
+          arr.forEach((element) => {
+            if (element.id == scoreWrapper.parentElement.parentElement.id) {
+              element.score = Number(scoreWrapper.children[1].textContent);
+              localStorage.setItem(
+                "localComments",
+                JSON.stringify(localComments)
+              );
+              console.log(element);
+              return;
+            } else {
+              loop(element.replies);
+            }
+          });
+        })();
+        
+      }
+    });
   }
+  };
 
   addReplyBtnsEvent();
 
@@ -196,71 +358,6 @@ fetchComments().then((data) => {
       navigator.vibrate([100, 0, 30]);
     }
   });
-
-  commentBox.querySelector("button").addEventListener("click", () => {
-    console.log("replying...");
-    console.log(commentBox.parentElement.id);
-    // console.log(commentBox.parentElement.querySelector(".user-name"));
-
-    const replyingTo = "@" + commentBox.parentElement.querySelector(".user-name").textContent;
-    console.log(replyingTo);
-
-    if (commentBox.querySelector("textarea").value) {
-      attachCommentTo(
-        commentBox.querySelector("textarea").value,
-        commentBox.parentElement.id,
-        replyingTo       
-      );
-      commentBox.querySelector("textarea").value = "";
-      addReplyBtnsEvent();
-      commentBox.querySelector("textarea").style.outline = "";
-    } else {
-      commentBox.querySelector("textarea").style.outline = "2px solid red";
-      navigator.vibrate([200, 50, 30]);
-    }
-  });
-
-  const scoreWrappers = document.querySelectorAll(".score-wrapper");
-
-  for (const scoreWrapper of scoreWrappers) {
-
-    scoreWrapper.children[0].addEventListener('click', () => {
-      scoreWrapper.children[1].textContent = Number(scoreWrapper.children[1].textContent) + 1;
-
-      ;(function loop(arr = localComments.comments) {
-
-        arr.forEach((element) => {
-          if (element.id == scoreWrapper.parentElement.parentElement.id) {
-            element.score = Number(scoreWrapper.children[1].textContent);
-            localStorage.setItem("localComments", JSON.stringify(localComments));
-            console.log(element);
-            return;
-          } else {
-            loop(element.replies);
-          }
-        });
-      })();
-    })
-
-    scoreWrapper.children[2].addEventListener('click', () => {
-      scoreWrapper.children[1].textContent = Number(scoreWrapper.children[1].textContent) - 1;
-
-      ;(function loop(arr = localComments.comments) {
-
-        arr.forEach((element) => {
-          if (element.id == scoreWrapper.parentElement.parentElement.id) {
-            element.score = Number(scoreWrapper.children[1].textContent);
-            localStorage.setItem("localComments", JSON.stringify(localComments));
-            console.log(element);
-            return;
-          } else {
-            loop(element.replies);
-          }
-        });
-      })();
-    })
-  }
-  
 
 
 });
