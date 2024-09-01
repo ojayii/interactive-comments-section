@@ -64,6 +64,10 @@ textarea:hover {
     margin: 0 auto;
 }
 
+#default-reply {
+    margin-bottom: 1rem;
+}
+
 .main-comment {
     display: flex;
     background-color: white;
