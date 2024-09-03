@@ -60,7 +60,7 @@ textarea:hover {
 .comment,
 #default-reply {
     width: 95%;
-    max-width: 37rem;
+    max-width: 43rem;
     margin: 0 auto;
 }
 
@@ -196,7 +196,7 @@ input.mutate-btn:checked ~ button {
 
 .add-reply {
     width: 100%;
-    max-width: 37rem;
+    max-width: 43rem;
     /* margin: 0 auto; */
     display: flex;
     justify-content: space-between;
@@ -311,5 +311,15 @@ input.mutate-btn:checked ~ button {
     .add-reply>textarea {
         order: -1;
         width: 100%;
+    }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 580px)
+   {
+    * {
+        font-size: 16px;
+        font-optical-sizing: none;
+        font-size-adjust: none;
+        font-kerning: none;
     }
 }
