@@ -100,8 +100,8 @@ fetchComments().then((data) => {
         <div class="data">
           <div class="user-meta">
             <img class="user-img" src=${item.user.image.webp} alt>
-            ${item.isCurrentUser ? '<span class="user-pov">You</span>' : ""}
             <span class="user-name">${item.user.username}</span>
+            ${item.isCurrentUser ? '<span class="user-pov">You</span>' : ""}
             <span class="comment-time">${getTimePassed(item.createdAt)}</span>
           </div>
           <p class="comment-text"><strong class="content-replying-to">${
