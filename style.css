@@ -4,6 +4,8 @@
     --light-grayish-blue: hsla(239, 58%, 85%, 0.747);
     --light-grayish-blue-1: hsla(240, 58%, 85%, 0.26);
     --pale-red: hsl(357, 100%, 86%);
+    --body-bg-color: #f5f5f5;
+    --comments-bg-color: white;
 }
 
 .attribution {
@@ -22,7 +24,7 @@ html {
     font-family: "Rubik", system-ui;
     font-optical-sizing: auto;
     min-height: 100vh;
-    background-color: #f5f5f5;
+    background-color: var(--body-bg-color);
     position: relative;
 }
 
@@ -66,6 +68,7 @@ textarea:hover {
 
 #default-reply {
     margin-bottom: 1rem;
+    background-color: var(--comments-bg-color);
 }
 
 .main-comment {
@@ -76,6 +79,7 @@ textarea:hover {
     gap: 1rem;
     position: relative;
     margin-bottom: 1rem;
+    background-color: var(--comments-bg-color);
 }
 
 .score-wrapper {
@@ -157,6 +161,7 @@ input.mutate-btn:checked ~ button {
 
 .user-name {
     font-weight: bolder;
+    color: var(--black);
 }
 
 .comment-time, .comment-text {
@@ -207,6 +212,7 @@ input.mutate-btn:checked ~ button {
     border-radius: 10px;
     flex-wrap: wrap;
     margin: 0 auto 1rem auto;
+    background-color: var(--comments-bg-color);
 }
 
 .add-reply>img {
@@ -314,12 +320,10 @@ input.mutate-btn:checked ~ button {
     }
 }
 
-@media only screen and (min-device-width: 320px) and (max-device-width: 580px)
-   {
-    * {
-        font-size: 16px;
-        font-optical-sizing: none;
-        font-size-adjust: none;
-        font-kerning: none;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --body-bg-color: black;
+        --comments-bg-color: #101010;
+        --black: #f5f5f5;
     }
 }
