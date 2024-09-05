@@ -1,4 +1,4 @@
-:root {
+.theme {
     --moderate-blue: hsl(238, 40%, 52%);
     --soft-red: hsl(358, 79%, 66%);
     --light-grayish-blue: hsla(239, 58%, 85%, 0.747);
@@ -6,6 +6,30 @@
     --pale-red: hsl(357, 100%, 86%);
     --body-bg-color: #f5f5f5;
     --comments-bg-color: white;
+}
+
+.theme--dark {
+    --moderate-blue: hsl(238, 40%, 52%);
+    --soft-red: hsl(358, 79%, 66%);
+    --light-grayish-blue: hsla(239, 58%, 85%, 0.747);
+    --light-grayish-blue-1: hsla(240, 58%, 85%, 0.26);
+    --pale-red: hsl(357, 100%, 86%);
+    --body-bg-color: black;
+    --comments-bg-color: #101010;
+    --black: #f5f5f5;
+}
+
+@media (prefers-color-scheme: dark) {
+    .theme {
+        --moderate-blue: hsl(238, 40%, 52%);
+        --soft-red: hsl(358, 79%, 66%);
+        --light-grayish-blue: hsla(239, 58%, 85%, 0.747);
+        --light-grayish-blue-1: hsla(240, 58%, 85%, 0.26);
+        --pale-red: hsl(357, 100%, 86%);
+        --body-bg-color: black;
+        --comments-bg-color: #101010;
+        --black: #f5f5f5;
+    }
 }
 
 .attribution {
@@ -135,7 +159,7 @@ input.mutate-btn {
     display: none !important;
 }
 
-input.mutate-btn:checked ~ button {
+input.mutate-btn:checked~button {
     scale: 1.5;
 }
 
@@ -164,7 +188,8 @@ input.mutate-btn:checked ~ button {
     color: var(--black);
 }
 
-.comment-time, .comment-text {
+.comment-time,
+.comment-text {
     /* font-size: 1rem; */
     color: gray;
 }
@@ -228,6 +253,7 @@ input.mutate-btn:checked ~ button {
     border-radius: 5px;
     border: 1px solid var(--light-grayish-blue);
     background-color: transparent;
+    color: var(--black);
 }
 
 
@@ -258,9 +284,9 @@ input.mutate-btn:checked ~ button {
     padding: 1rem;
     background-color: white;
     border-radius: 10px;
-    
+
     /* box-shadow: 0 0 0 10000rem rgba(0, 0, 0, 0.5); */
-    
+
 }
 
 .prompt-modal__wrapper>span {
@@ -317,13 +343,5 @@ input.mutate-btn:checked ~ button {
     .add-reply>textarea {
         order: -1;
         width: 100%;
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --body-bg-color: black;
-        --comments-bg-color: #101010;
-        --black: #f5f5f5;
     }
 }
